@@ -1,6 +1,6 @@
 //const BASE_URL = "https://jpl-admin.onrender.com";
-//const BASE_URL = "https://jpl-backend.onrender.com";
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://jpl-asset-form.onrender.com";
+// const BASE_URL = "http://localhost:5000";
 
 // Cache for modal instance
 let commentModalInstance = null;
