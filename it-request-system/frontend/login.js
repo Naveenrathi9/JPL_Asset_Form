@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loginButton.textContent = 'Logging in...';
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('https://jpl-asset-form.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -94,7 +94,7 @@ async function checkAuthStatus() {
 
 async function verifyToken(token) {
   try {
-    const response = await fetch('http://localhost:5000/api/verify-auth', {
+    const response = await fetch('https://jpl-asset-form.onrender.com/api/verify-auth', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
