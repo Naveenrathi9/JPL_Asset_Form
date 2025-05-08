@@ -29,7 +29,7 @@ body {
   padding: 0.8rem 0;
   position: relative;
   z-index: 100;
-  height: auto;
+  height: 5rem;
   box-shadow: none;
 }
 
@@ -46,6 +46,9 @@ body {
   display: flex;
   align-items: center;
   gap: 1.2rem;
+}
+.header-left img {
+  height: 6rem;
 }
 
 .header-icon {
@@ -118,7 +121,7 @@ body {
 /* Login Card */
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   margin: 0 auto;
   padding: 2.5rem;
   border-radius: var(--border-radius);
