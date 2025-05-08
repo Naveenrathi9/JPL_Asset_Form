@@ -330,8 +330,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Submitting form data:', formData);
 
     try {
-      const BASE_URL = "http://localhost:5000";
-      // const BASE_URL = "https://jpl-asset-form.onrender.com";
+      // const BASE_URL = "http://localhost:5000";
+      const BASE_URL = "https://jpl-asset-form.onrender.com";
       
       const token = localStorage.getItem('token');
       const response = await fetch(`${BASE_URL}/api/submit`, {
