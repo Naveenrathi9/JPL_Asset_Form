@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // First check if we're already logged in with a valid token
+  checkAuthStatus();
+  
   const loginForm = document.getElementById('loginForm');
   const loginButton = document.getElementById('loginButton');
   const errorMessage = document.getElementById('errorMessage');
@@ -19,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loginButton.textContent = 'Logging in...';
 
     try {
-      const response = await fetch('https://jpl-asset-form.onrender.com/api/login', {
+      const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -34,18 +37,86 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const data = await response.json();
-      console.log('Login successful:', data);
-
-      // Store JWT token in localStorage
+      
+      // Store the token in localStorage
       localStorage.setItem('token', data.token);
+      
+      // Store user data in localStorage (optional but useful for UI)
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
 
-      // Redirect to main page (index.html)
-      window.location.href = 'index.html';
+      // Verify the token is valid before redirecting
+      const authCheck = await verifyToken(data.token);
+      if (authCheck.valid) {
+        window.location.href = 'index.html';
+      } else {
+        // If verification fails, clear the stored token
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        errorMessage.textContent = 'Authentication failed. Please try again.';
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+      }
     } catch (err) {
       console.error('Login error:', err);
+      // Clear any stored tokens on error
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       errorMessage.textContent = 'An error occurred. Please try again.';
       loginButton.disabled = false;
       loginButton.textContent = 'Login';
     }
   });
 });
+
+async function checkAuthStatus() {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const authCheck = await verifyToken(token);
+      if (authCheck.valid) {
+        // Update user data in localStorage if needed
+        if (authCheck.user) {
+          localStorage.setItem('user', JSON.stringify(authCheck.user));
+        }
+        window.location.href = 'index.html';
+      } else {
+        // Token is invalid, clear storage
+        clearAuthData();
+      }
+    } catch (err) {
+      console.error('Auth check error:', err);
+      clearAuthData();
+    }
+  }
+}
+
+async function verifyToken(token) {
+  try {
+    const response = await fetch('http://localhost:5000/api/verify-auth', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      return { valid: false };
+    }
+
+    const data = await response.json();
+    return {
+      valid: true,
+      user: data.user
+    };
+  } catch (err) {
+    console.error('Token verification error:', err);
+    return { valid: false };
+  }
+}
+
+function clearAuthData() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+}
